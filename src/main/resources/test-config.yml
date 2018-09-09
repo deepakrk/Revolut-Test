@@ -1,0 +1,68 @@
+template: Hello, %s!
+defaultName: imrevolut
+
+# Database settings.
+database:
+  # the name of your JDBC driver
+  driverClass: org.h2.Driver
+
+  # the username
+  user: sa
+
+  # the password
+  password: sa
+
+  # the JDBC URL
+  url: jdbc:h2:./revolutdb
+  properties:
+    hibernate.dialect: org.hibernate.dialect.H2Dialect
+    hibernate.show_sql: true
+    hibernate.generate_statistics: false
+    hibernate.hbm2ddl.auto: create # validates schema when service is started
+
+
+server:
+  adminMinThreads: 1
+  adminMaxThreads: 64
+  adminContextPath: /
+  applicationContextPath: /revolut-api
+  applicationConnectors:
+    - type: http
+      port: 8000
+    - type: https
+      port: 8443
+      keyStorePath: clientkeystore
+      keyStorePassword: revolut
+      validateCerts: false
+
+# Logging settings.
+logging:
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+
+  appenders:
+    # Log warnings and errors to stderr
+    - type: console
+      threshold: WARN
+      target: stderr
+
+    # Log info, warnings and errors to our apps' main log.
+    # Rolled over daily and retained for 5 days.
+    - type: file
+      threshold: INFO
+      currentLogFilename: ./logs/revolut.log
+      archivedLogFilenamePattern: ./logs/revolut-%d.log.gz
+      archivedFileCount: 5
+
+    # Log debug messages, info, warnings and errors to our apps' debug log.
+    # Rolled over hourly and retained for 6 hours
+    - type: file
+      threshold: DEBUG
+      currentLogFilename: ./logs/revolut-debug.log
+      archivedLogFilenamePattern: ./logs/revolut-debug-%d{yyyy-MM-dd-hh}.log.gz
+      archivedFileCount: 6
+
+# the only required property is resourcePackage, for more config options see below
+swagger:
+  resourcePackage: com.revolut.resources,com.revolut.account.resource
